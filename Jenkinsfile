@@ -4,20 +4,32 @@ pipeline{
 
     stages{
 
-        stage("Descargar código de la aplicación"){
+        stage("Descargar codigo de la aplicacion"){
             steps{
                 git "https://github.com/ddieza04/facturas-rest.git"
             }
         }
 
-        stage("Creación de imagen"){
+        stage("Creacion de imagen"){
             steps{
-                bat "docker build -t facturas-node-16 ."
+                script {
+                    if(isUnix()){
+                        sh "docker build -t facturas-node-16 ."
+                    }else{
+                        bat "docker build -t facturas-node-16 ."
+                    }
+                }
             }
         }
-        stage("Ejecución de contenedor"){
+        stage("Ejecucion de contenedor"){
             steps{
-               bat "docker run -d --name app-facturas-node -p 8081:8080 facturas-node-16"
+                script {
+                    if(isUnix()){
+                        sh "docker run -d --name app-facturas-node -p 8081:8080 facturas-node-16"
+                    }else{
+                        bat "docker run -d --name app-facturas-node -p 8081:8080 facturas-node-16"
+                    }
+                }
             }
         }
         stage("Test del servicio"){
@@ -27,9 +39,18 @@ pipeline{
         }
         stage("Cerrar recursos"){
             steps{
-               bat "docker stop app-facturas-node"
-               bat "docker container rm app-facturas-node"
-               bat "docker image rm facturas-node-16"
+                script {
+                    if(isUnix()){
+                        sh "docker stop app-facturas-node"
+                        sh "docker container rm app-facturas-node"
+                        sh "docker image rm facturas-node-16"
+                    }else{
+                        bat "docker stop app-facturas-node"
+                        bat "docker container rm app-facturas-node"
+                        bat "docker image rm facturas-node-16"
+                    }
+                }
+               
             }
         }
     }
