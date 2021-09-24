@@ -6,18 +6,18 @@ pipeline{
 
         stage("Descargar código de la aplicación"){
             steps{
-                git "url"
+                git "https://github.com/ddieza04/facturas-rest.git"
             }
         }
 
         stage("Creación de imagen"){
             steps{
-                bat "docker build -t app1 ."
+                bat "docker build -t facturas-node-16 ."
             }
         }
         stage("Ejecución de contenedor"){
             steps{
-               bat "docker run -d --name app1 -p 8080:8080 app1"
+               bat "docker run -d --name app-facturas-node -p 8081:8080 facturas-node-16"
             }
         }
         stage("Test del servicio"){
@@ -27,9 +27,9 @@ pipeline{
         }
         stage("Cerrar recursos"){
             steps{
-               bat "docker stop app1"
-               bat "docker container rm app1"
-               bat "docker image rm app1"
+               bat "docker stop app-facturas-node"
+               bat "docker container rm app-facturas-node"
+               bat "docker image rm facturas-node-16"
             }
         }
     }
